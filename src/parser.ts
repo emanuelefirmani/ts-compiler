@@ -1,7 +1,8 @@
 import {List} from 'immutable';
 import {Token} from "./tokenizer";
 
-type Node = number;
+type Expression = {method: string, arguments: List<Node>};
+type Node = number | Expression;
 type FoldItem = { accumulator: List<Node>, rest: List<Token> };
 
 export function parse(tokens: List<Token>): List<Node> {
@@ -15,16 +16,13 @@ function parse2(item: FoldItem): FoldItem {
 
     var token = item.rest.first();
 
-    const newAccumulator = item.accumulator.push(toNode(token));
-    const newRest = item.rest.skip(1);
-
-    return {accumulator: newAccumulator, rest: newRest};
-}
-
-function toNode(token: Token | undefined): Node {
     if(typeof token === 'number') {
-        return token;
+        const newAccumulator = item.accumulator.push(token);
+        const newRest = item.rest.skip(1);
+
+        return {accumulator: newAccumulator, rest: newRest};
     }
+
 
     throw new RangeError(`Unexpected token ${JSON.stringify(token)}`);
 }
