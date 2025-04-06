@@ -22,7 +22,18 @@ describe('parser', () => {
         expect(result).toEqual(List(
              [{
                  method: "add",
-                 arguments: List<Node>([2]) }]
+                 parameters: List<Node>([2]) }]
+        ));
+    });
+
+    it('returns parses expression with two arguments', () => {
+        const tokens = tokenize("(add 2 3)");
+        const result = parse(tokens);
+
+        expect(result).toEqual(List(
+             [{
+                 method: "add",
+                 parameters: List<Node>([2, 3]) }]
         ));
     });
 })

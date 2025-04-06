@@ -1,7 +1,7 @@
 import {List} from 'immutable';
 import {Token, OpenBracket, CloseBracket, Atom} from "./tokenizer";
 
-export type Expression = { method: string, arguments: List<Node> };
+export type Expression = { method: string, parameters: List<Node> };
 export type Node = number | Expression;
 type FoldItem = { accumulator: List<Node>, rest: List<Token> };
 
@@ -11,30 +11,33 @@ export function parse(tokens: List<Token>): List<Node> {
 }
 
 function parse2(item: FoldItem): FoldItem {
-    if(item.rest.size === 0)
-        return item;
+    let newItem = item;
 
-    const token = item.rest.first();
-    const newRest = item.rest.skip(1);
+    while(newItem.rest.size > 0)
+    {
+        const token = newItem.rest.first();
+        const newRest = newItem.rest.skip(1);
 
-    if(typeof token === 'number') {
-        const newAccumulator = item.accumulator.push(token);
-        return {accumulator: newAccumulator, rest: newRest};
-    }
-    if(token instanceof OpenBracket){
-        const method = newRest.first();
-        if(!(method instanceof Atom)) {
-            throw new Error(`An expression must start with atom, but found: ${JSON.stringify(token)}`);
+        if(typeof token === 'number') {
+            const newAccumulator = newItem.accumulator.push(token);
+            newItem = {accumulator: newAccumulator, rest: newRest};
         }
-        const restAfterMethod = newRest.skip(1);
-        const subExpression= parse2({accumulator: List(), rest: restAfterMethod});
-        const args = subExpression.accumulator;
-        const expression: Expression = {method: method.name, arguments: args};
-        return {accumulator: item.accumulator.push(expression), rest: subExpression.rest};
-    }
-    if(token instanceof CloseBracket){
-        return {accumulator: item.accumulator, rest: newRest};
+        else if(token instanceof OpenBracket){
+            const method = newRest.first();
+            if(!(method instanceof Atom)) {
+                throw new Error(`An expression must start with atom, but found: ${JSON.stringify(token)}`);
+            }
+            const restAfterMethod = newRest.skip(1);
+            const subExpression= parse2({accumulator: List(), rest: restAfterMethod});
+            const expression: Expression = {method: method.name, parameters: subExpression.accumulator};
+            return {accumulator: newItem.accumulator.push(expression), rest: subExpression.rest};
+        }
+        else if(token instanceof CloseBracket){
+            return {accumulator: newItem.accumulator, rest: newRest};
+        }
+        else
+            throw new RangeError(`Unexpected token ${JSON.stringify(token)}`);
     }
 
-    throw new RangeError(`Unexpected token ${JSON.stringify(token)}`);
+    return newItem;
 }
