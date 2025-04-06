@@ -1,5 +1,5 @@
 import {List} from 'immutable';
-import {Token} from "./tokenizer";
+import {Token, OpenBracket, CloseBracket} from "./tokenizer";
 
 type Expression = {method: string, arguments: List<Node>};
 type Node = number | Expression;
@@ -21,6 +21,9 @@ function parse2(item: FoldItem): FoldItem {
         const newRest = item.rest.skip(1);
 
         return {accumulator: newAccumulator, rest: newRest};
+    }
+    if(token instanceof OpenBracket){
+
     }
 
 
