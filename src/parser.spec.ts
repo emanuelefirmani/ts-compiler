@@ -1,17 +1,28 @@
-import {parse} from "./parser";
+import {parse, Node} from "./parser";
 import {List} from "immutable";
 import {tokenize} from "./tokenizer";
 
 describe('parser', () => {
     it('returns empty list', () => {
-        var tokens = tokenize("");
-        var result = parse(tokens);
+        const tokens = tokenize("");
+        const result = parse(tokens);
         expect(result.size).toEqual(0);
     });
 
     it('returns a number', () => {
-        var tokens = tokenize("42");
-        var result = parse(tokens);
+        const tokens = tokenize("42");
+        const result = parse(tokens);
         expect(result.last()).toEqual(42);
+    });
+
+    it('returns parses simple expression', () => {
+        const tokens = tokenize("(add 2)");
+        const result = parse(tokens);
+
+        expect(result).toEqual(List(
+             [{
+                 method: "add",
+                 arguments: List<Node>([2]) }]
+        ));
     });
 })
