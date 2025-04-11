@@ -30,10 +30,15 @@ function parseRecursive(item: FoldItem): FoldItem {
             const restAfterMethod = newRest.skip(1);
             const subExpression= parseRecursive({accumulator: List(), rest: restAfterMethod});
             const expression: Expression = {method: method.name, parameters: subExpression.accumulator};
-            newItem = {accumulator: newItem.accumulator.push(expression), rest: subExpression.rest};
+
+            if(subExpression.rest.size === 0 || !(subExpression.rest.first() instanceof CloseBracket)) {
+                throw new Error(`An expression is missing a closing bracket: ${JSON.stringify(expression)}`);
+            }
+
+            newItem = {accumulator: newItem.accumulator.push(expression), rest: subExpression.rest.skip(1)};
         }
         else if(token instanceof CloseBracket){
-            return {accumulator: newItem.accumulator, rest: newRest};
+            return newItem;
         }
         else
             throw new RangeError(`Unexpected token ${JSON.stringify(token)}`);

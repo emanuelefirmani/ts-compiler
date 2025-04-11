@@ -63,4 +63,9 @@ describe('parser', () => {
                  ]) }]
         ));
     });
+
+    it('throws on missing closing bracket', () => {
+        const tokens = tokenize("(ok 1 2 (add 2 3)");
+        expect(() => parse(tokens)).toThrow(/An expression is missing a closing bracket.*2,3/);
+    });
 })
