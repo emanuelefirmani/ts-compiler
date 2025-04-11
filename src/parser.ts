@@ -6,11 +6,11 @@ export type Node = number | Expression;
 type FoldItem = { accumulator: List<Node>, rest: List<Token> };
 
 export function parse(tokens: List<Token>): List<Node> {
-    const item = parse2({ accumulator: List<Node>(), rest: tokens});
+    const item = parseRecursive({ accumulator: List<Node>(), rest: tokens});
     return item.accumulator;
 }
 
-function parse2(item: FoldItem): FoldItem {
+function parseRecursive(item: FoldItem): FoldItem {
     let newItem = item;
 
     while(newItem.rest.size > 0)
@@ -28,9 +28,9 @@ function parse2(item: FoldItem): FoldItem {
                 throw new Error(`An expression must start with atom, but found: ${JSON.stringify(token)}`);
             }
             const restAfterMethod = newRest.skip(1);
-            const subExpression= parse2({accumulator: List(), rest: restAfterMethod});
+            const subExpression= parseRecursive({accumulator: List(), rest: restAfterMethod});
             const expression: Expression = {method: method.name, parameters: subExpression.accumulator};
-            return {accumulator: newItem.accumulator.push(expression), rest: subExpression.rest};
+            newItem = {accumulator: newItem.accumulator.push(expression), rest: subExpression.rest};
         }
         else if(token instanceof CloseBracket){
             return {accumulator: newItem.accumulator, rest: newRest};

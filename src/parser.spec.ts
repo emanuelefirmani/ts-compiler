@@ -15,25 +15,52 @@ describe('parser', () => {
         expect(result.last()).toEqual(42);
     });
 
-    it('returns parses simple expression', () => {
+    it('parses simple expression', () => {
         const tokens = tokenize("(add 2)");
         const result = parse(tokens);
 
-        expect(result).toEqual(List(
+        expect(result).toStrictEqual(List(
              [{
                  method: "add",
                  parameters: List<Node>([2]) }]
         ));
     });
 
-    it('returns parses expression with two arguments', () => {
+    it('parses expression with two arguments', () => {
         const tokens = tokenize("(add 2 3)");
         const result = parse(tokens);
 
-        expect(result).toEqual(List(
+        expect(result).toStrictEqual(List(
              [{
                  method: "add",
                  parameters: List<Node>([2, 3]) }]
+        ));
+    });
+
+    it('parses complex expression', () => {
+        const tokens = tokenize("(add 1 (sub 2 3) (mul (go 4 5) 6))");
+        const result = parse(tokens);
+
+        expect(result).toStrictEqual(List(
+             [{
+                 method: "add",
+                 parameters: List<Node>([
+                     1,
+                     {
+                         method: "sub",
+                         parameters: List<Node>([2, 3])
+                     },
+                     {
+                         method: "mul",
+                         parameters: List<Node>([
+                             {
+                                 method: "go",
+                                 parameters: List<Node>([4, 5])
+                             },
+                             6
+                             ])
+                     }
+                 ]) }]
         ));
     });
 })
