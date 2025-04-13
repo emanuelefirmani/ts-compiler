@@ -9,10 +9,10 @@ export function interpret(tree: Node): number {
     const p1 = interpret(expr.parameters.get(0)!);
     const p2 = interpret(expr.parameters.get(1)!);
 
-    if(expr.method == "add") {
+    if(expr.method == "+") {
         return p1 + p2;
     }
-    if(expr.method == "sub") {
+    if(expr.method == "-") {
         return p1 - p2;
     }
     return NaN;

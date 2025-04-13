@@ -10,19 +10,19 @@ describe('can sum', () => {
     });
 
     it('returns 5', () => {
-        const ast = parse(tokenize("(add 2 3)")).first()!;
+        const ast = parse(tokenize("(+ 2 3)")).first()!;
 
         expect(interpret(ast)).toEqual(5);
     });
 
     it('sums subexpressions', () => {
-        const ast = parse(tokenize("(add 1 (add 2 (add 3 4)))")).first()!;
+        const ast = parse(tokenize("(+ 1 (+ 2 (+ 3 4)))")).first()!;
 
         expect(interpret(ast)).toEqual(10);
     });
 
     it('can add and subtract', () => {
-        const ast = parse(tokenize("(add 1 (sub (add 3 4) 2))")).first()!;
+        const ast = parse(tokenize("(+ 1 (- (+ 3 4) 2))")).first()!;
 
         expect(interpret(ast)).toEqual(6);
     });

@@ -27,7 +27,7 @@ function toToken(text: string): Token {
             if(/^\d*(\.\d+)?$/.test(text)) {
                 return parseFloat(text);
             }
-            if(/^[a-zA-Z]/.test(text)) {
+            if(/^[+\-a-zA-Z]/.test(text)) {
                 return getAtom(text);
             }
             throw new Error('Unexpected token: ' + text);
