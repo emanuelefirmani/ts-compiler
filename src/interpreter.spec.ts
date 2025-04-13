@@ -14,4 +14,10 @@ describe('can sum', () => {
 
         expect(interpret(ast)).toEqual(5);
     });
+
+    it('sums subexpressions', () => {
+        const ast = parse(tokenize("(add 1 (add 2 (add 3 4)))")).first()!;
+
+        expect(interpret(ast)).toEqual(10);
+    });
 })

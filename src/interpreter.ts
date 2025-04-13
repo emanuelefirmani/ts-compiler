@@ -1,11 +1,13 @@
 import {Expression, Node} from "./parser";
 
 export function interpret(tree: Node): number {
-    if(typeof tree === 'number') {
+    if (typeof tree === 'number') {
         return tree;
     }
 
     const expr = tree as Expression;
+    const p1 = interpret(expr.parameters.get(0)!);
+    const p2 = interpret(expr.parameters.get(1)!);
 
-    return (expr.parameters.get(0) as number) + (expr.parameters.get(1) as number);
+    return p1 + p2;
 }
