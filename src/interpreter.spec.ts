@@ -20,4 +20,10 @@ describe('can sum', () => {
 
         expect(interpret(ast)).toEqual(10);
     });
+
+    it('can add and subtract', () => {
+        const ast = parse(tokenize("(add 1 (sub (add 3 4) 2))")).first()!;
+
+        expect(interpret(ast)).toEqual(6);
+    });
 })
